@@ -51,3 +51,5 @@ The voices do not appear distinct enough at this phase, rather they seem only to
 Running asynchronously in a "fugue" structure as planned.
 
 Should I add banks of words for each voice?
+
+Bounced ideas between ChatGPT and Gemini. Chat seems to get the "soul" of the project and Gemini offers better coding suggestions/refinements.

@@ -1,0 +1,52 @@
+Voice Refinements
+The voices are already well-defined, but we can make them more distinct by focusing on specific linguistic patterns and tics.
+
+Rosa: We can add a function to infuse her text with more exclamations and rhetorical questions that aren't meant to be answered. Her voice could also use more judgmental adjectives (e.g., "monstrous," "terrible," "unholy").
+
+Quentin: His loop can have a higher probability of circular reasoning and self-contradiction. We can also have his output decay by introducing more ellipses and incomplete sentences as the recursion deepens, reflecting his mental state.
+
+Shreve: His voice should lean heavily on speculative language ("it must have been that...", "perhaps he thought..."). We can also add a function for him to randomly "ask" questions of the other loops' outputs, even if it's just a phrase followed by a question mark.
+
+Father: His exhaustion can be coded by making his text have a higher chance of trailing off or ending abruptly. We can also build a specific helper function that allows him to literally echo a random, previously generated phrase from one of the other columns, capturing his haunted, repetitive nature.
+
+
+ChaatGPT suggestions:
+🎙️ Voice Cheat Sheet
+
+Rosa (The Bitter Prophetess)
+- Cadence: Long, winding clauses that end in judgment.
+- Tics:
+-- Frequent adjectives of moral weight: monstrous, unholy, cursed, damned, profane.
+-- Rhetorical questions: “What else could it have been?”
+-- Exclamations: “Unthinkable!” “Terrible!”
+-- Occasionally inserts biblical register (“lo,” “behold,” “unto”) to lean into her gothic sermon voice.
+- Behavior: Accuses the past of sin, condemns characters she names, never resolves.
+
+
+Quentin (The Broken Spiral)
+- Cadence: Recursive, fragmentary, decays into ellipses.
+- Tics:
+-- Circular logic: “because it was because it had always been because—”
+-- Incomplete thoughts trailing into ellipses.
+-- Sudden reversals: “yes no yes no—”.
+-- Occasional direct negation of his own prior phrase: “not that but not not that either”.
+- Behavior: Each recursive depth increases entropy — more fragments, fewer complete sentences, more breakdown.
+
+
+Shreve (The Rational Outsider)
+- Cadence: Analytical, speculative, full of qualifiers.
+- Tics:
+-- Prefaces: “perhaps,” “it must have been,” “surely he thought,” etc.
+-- Questions aimed at others: “and Rosa said this?” “but why would he—?”
+-- Cleaner syntax (shorter sentences), but haunted by the contamination of the others.
+- Behavior: His rationality gets invaded — by Phase 3 or 4, even his “logic” collapses into echo fragments.
+
+
+Father (The Echoing Relic)
+- Cadence: Sparse, weighty, drained.
+- Tics:
+-- Often repeats phrases from other columns word-for-word, but stripped of context.
+-- Trailing cut-offs: “and then—” / “but it was not—”
+-- Biblical tonality but without conviction: “so it was,” “it shall not,” etc.
+-- Occasional chilling brevity: one word utterances. “Sin.” “Blood.” “Never.”
+- Behavior: Feels like an empty shell haunted by the others’ language.
