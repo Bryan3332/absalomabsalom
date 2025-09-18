@@ -5,7 +5,30 @@ Date: 09/17/2025
 Phase 0 - setup
 Phase 1 - writing code for recursion loops
 
-pseudocode:
+Key Helper Functions
+randomly_repeat(words) → pick random words, repeat them multiple times. (“old old old house”)
+randomly_insert(words, corpus) → sprinkle in random phrases from your Faulkner snippets or your own bank.
+glue_with_conjunctions(words, conj_list) → chain clauses together with endless “and/but/because” so it feels breathless.
+
+Phase 0:
+Setup venv, repo, and notebook. Overrode Jupyter's synchronous mandate.
+
+
+Phase 1:
+Testing Python code for phase 1.
+
+UI appears separated but it not laid out in columns - it populates one left-justified column. Ground looks fine. 1288 words.
+
+The voices do not appear distinct enough at this phase, rather they seem only to be repeating the user input and then chopping and screwing it. Not narrative. No questions from the Shreve loop. Hard to read, can't even tell whose columns is whose.
+
+Running asynchronously in a "fugue" structure as planned.
+
+Should I add banks of words for each voice?
+
+Bounced ideas between ChatGPT and Gemini. Chat seems to get the "soul" of the project and Gemini offers better coding suggestions/refinements.
+
+
+Pseudocode:
 
 # Function: elongate_text
 # Takes user input and stretches it into Faulknerian nightmare sentences
@@ -31,25 +54,3 @@ function elongate_text(input_text, depth=1, max_depth=3):
     mutated = elongate_text(chained, depth + 1, max_depth)
 
     return mutated
-
-Key Helper Functions
-randomly_repeat(words) → pick random words, repeat them multiple times. (“old old old house”)
-randomly_insert(words, corpus) → sprinkle in random phrases from your Faulkner snippets or your own bank.
-glue_with_conjunctions(words, conj_list) → chain clauses together with endless “and/but/because” so it feels breathless.
-
-Phase 0:
-Setup venv, repo, and notebook. Overrode Jupyter's synchronous mandate.
-
-
-Phase 1:
-Testing Python code for phase 1.
-
-UI appears separated but it not laid out in columns - it populates one left-justified column. Ground looks fine. 1288 words.
-
-The voices do not appear distinct enough at this phase, rather they seem only to be repeating the user input and then chopping and screwing it. Not narrative. No questions from the Shreve loop. Hard to read, can't even tell whose columns is whose.
-
-Running asynchronously in a "fugue" structure as planned.
-
-Should I add banks of words for each voice?
-
-Bounced ideas between ChatGPT and Gemini. Chat seems to get the "soul" of the project and Gemini offers better coding suggestions/refinements.

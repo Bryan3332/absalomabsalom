@@ -1,0 +1,78 @@
+Day 2
+
+Date: 9/18/2025
+
+Phase 2: Voices and Insanity
+
+Downloaded pypdf to extract plain text from pdf of book Absalom, Absalom!
+
+Created utility scripts for these functions:
+Cleaned up text by removing all instances of the n-word and its variations, stripping punctuation and special characters, adding spaces between words, and attempted to fix unicode issues. Resulting text files look crazy, but for artistic purposes I might just go with it. It looks dissonant and insane.
+
+Added utils to .gitignore
+
+Updated engine logic to call helper functions, separated the helper functions (voices) into separate script, added AA book text in separate document.
+
+This way:
+- Voices live in one place (voices.py). Easy to tweak later.
+- Corpus is externalized (absalom_clean.txt). Remixing or swapping texts, doesn't touch engine logic.
+- Engine calls helpers dynamically so each character mutates their text differently at every depth. Hopefully this makes each voice distinct.
+
+Add flavor to voices. Changed ground and column formatting to reflect vision.
+
+
+Pseudocode:
+
+### 1. Load Faulkner Corpus
+# Auto-load fragments from Absalom, Absalom! text file.
+def load_faulkner_fragments(filepath):
+    with open(filepath, "r") as f:
+        text = f.read()
+    # Split into fragments (by sentence, clause, or n-gram)
+    fragments = custom_fragmentation(text)
+    return fragments
+
+CORPUS = load_faulkner_fragments("absalom.txt")
+
+### 2. Voice Filters: Make Each Character More Distinct
+# Add stylistic quirks per character.
+
+Rosa:
+    - Higher conjunction chaining (endless "and... and... and")
+    - Lamenting tone: add words like "weeping," "mourning," "betrayal"
+    - Probability of inserting emotionally loaded Faulkner fragments ↑
+
+Quentin:
+    - Fragmentation: sometimes cut sentence abruptly
+    - Reversal at deeper recursion
+    - Contradictions (insert "no... yes... no" loops)
+
+Shreve:
+    - Analytic: “So that means…” “If then…”
+    - References other outputs more aggressively
+    - Occasional “questions” at end of phrases
+
+Father:
+    - Echo function: always pulls phrases from Rosa/Quentin
+    - Rarely originates—mostly reassembles
+    - Beta tone: soften words with “perhaps,” “it seemed,” “maybe”
+
+### 3. Output Architecture (Formatting Upgrade)
+# Replace textwrap with table-style alignment
+# so the four voices really appear as 4 pillars.
+
+def format_as_table(columns):
+    # Use str.ljust(width) or tabulate library
+    # Each character’s text fills its own column
+    # Rows aligned horizontally like stone blocks
+
+### 4. The Ground (Compression Pass)
+# Instead of naive concatenation, compress all voices
+# into one Faulknerian mega-sentence.
+
+def compress_outputs(outputs):
+    combined = " ".join(outputs)
+    # Insert random conjunctions instead of periods
+    # Strip most punctuation for “run-on” effect
+    return run_on_sentence(combined)
+
