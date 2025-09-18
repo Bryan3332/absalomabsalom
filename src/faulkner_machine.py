@@ -2,13 +2,14 @@
 import asyncio
 import random
 import textwrap
+import os
 
 from voices import rosa_rhetorical, quentin_decay, shreve_speculation, father_echo
 from corpus_loader import load_corpus
 
-# Load Faulkner fragments from txt (adjust filename if yours differs)
-CORPUS = load_corpus("absalom-clean.txt")
-
+SCRIPT_DIR = os.path.dirname(__file__)  # folder of faulkner_machine.py
+CORPUS_PATH = os.path.join(SCRIPT_DIR, "absalom-clean.txt")
+CORPUS = load_corpus(CORPUS_PATH)
 
 class Character:
     def __init__(self, name, style_rules):
@@ -208,7 +209,7 @@ class StoryGenerator:
         # glue to make the run-on swamp effect
         ground = self.characters[0].glue_with_conjunctions(combined.split())
 
-        print("\n\nTHE GROUND")
+        print("\n\nTHE EARTH SWALLOWS EVERYTHING")
         print("=" * (col_width * 4 + 3 * 3))
         print(textwrap.fill(ground, width=col_width * 4 + 3 * 3))
 
