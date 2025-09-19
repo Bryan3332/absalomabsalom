@@ -1,6 +1,13 @@
 # voices.py
 import random
 
+def mrcompson_echo(text, shared_data, self_name):
+    other_outputs = [val for key, val in shared_data.items() if key != self_name and val]
+    if other_outputs and random.random() < 0.5:
+        phrase = random.choice(random.choice(other_outputs))
+        return text + " ... " + phrase
+    return text
+
 def rosa_rhetorical(text):
     tics = [
         "what else could it have been",
@@ -32,11 +39,4 @@ def shreve_speculation(text):
         text = random.choice(prefixes) + " " + text
     if random.random() < 0.2:
         text += "?"
-    return text
-
-def father_echo(text, shared_data, self_name):
-    other_outputs = [val for key, val in shared_data.items() if key != self_name and val]
-    if other_outputs and random.random() < 0.5:
-        phrase = random.choice(random.choice(other_outputs))
-        return text + " ... " + phrase
     return text
