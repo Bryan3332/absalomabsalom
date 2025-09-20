@@ -1,12 +1,35 @@
 # faulkner_machine.py
-import asyncio
+"""
+Faulkner Machine v3 — Phase 3
+
+Behavior summary:
+- Four sequential voices (Mr Compson, Rosa, Quentin, Shreve)
+- Pillars grow upward line-by-line; ground grows downward line-by-line
+- Incest = small fragment-stealing between pillars
+- Pillars & ground hard-capped at 1288 characters
+- Quentin uses outer-loop depth for decay
+- Ground devours pieces of pillar output (bite-size) and outputs distorted fragments
+"""
+
+import os
 import random
 import textwrap
-import os
+import asyncio
+import time
 
 from voices import mrcompson_echo, rosa_rhetorical, quentin_decay, shreve_speculation
 from ground import ground_devour
 from corpus_loader import load_corpus
+from incest import steal_fragment
+
+# -------- CONFIG ----------
+PILLAR_CHAR_CAP = 1288
+GROUND_CHAR_CAP = 1288
+CYCLES = 24            # how many full rounds of 4 voices
+DELAY = 0.18           # seconds between each voice output (for display)
+COL_WIDTH = 28         # column width for terminal UI
+CORPUS_FILENAME = "absalom-clean.txt"  # expect this in same folder as script
+# ---------------------------
 
 SCRIPT_DIR = os.path.dirname(__file__)  # folder of faulkner_machine.py
 CORPUS_PATH = os.path.join(SCRIPT_DIR, "absalom-clean.txt")
@@ -19,14 +42,13 @@ class Character:
         self.output = []
 
     def generate_text(self, input_text, shared_data, depth=0):
-        if depth >= self.style_rules.get("max_depth", 3):
-            return ""
-
         words = input_text.split()
 
         # Core manipulations
         words = self.randomly_repeat(words)
         words = self.randomly_insert(words, shared_data)
+        # Convert words to text
+        text = " ".join(words)
 
         # Apply voice-specific helpers (externalized in voices.py)
         if self.name == "Mr Compson":
@@ -34,12 +56,18 @@ class Character:
         elif self.name == "Rosa":
             text = rosa_rhetorical(text)
         elif self.name == "Quentin":
-            text = quentin_decay(text, depth)
+            text = quentin_decay(text, depth) #depth only applies to Quentin
         elif self.name == "Shreve":
             text = shreve_speculation(text)
 
         # Save output (this column)
         self.output.append(text)
+
+         # Enforce 1288 character cap on pillar
+        joined = " ".join(self.output)
+        if len(joined) > 1288:
+            truncated = joined[:1288]  # cut off at 1288 characters
+            self.output = [truncated]  # reset output to a single truncated string
 
 
     def randomly_repeat(self, words):
@@ -105,31 +133,28 @@ class StoryGenerator:
             Character("Mr Compson", {
                 "max_depth": 4, "repetition_prob": 0.05, "corpus_insert_prob": 0.05,
                 "hallucination_prob": 0.05, "reference_prob": 0.3,
-                "conjunctions": ["and then"], "max_chains": 1, "echo_prob": 0.5,
             }),
             Character("Rosa", {
                 "max_depth": 5, "repetition_prob": 0.2, "corpus_insert_prob": 0.3,
                 "hallucination_prob": 0.1, "reference_prob": 0.15,
-                "conjunctions": ["and", "but", "so"], "max_chains": 3,
             }),
             Character("Quentin", {
                 "max_depth": 6, "repetition_prob": 0.4, "corpus_insert_prob": 0.25,
                 "hallucination_prob": 0.2, "reference_prob": 0.2,
-                "conjunctions": ["and", "or", "for"], "max_chains": 4, "reversal_depth": 4,
             }),
             Character("Shreve", {
                 "max_depth": 5, "repetition_prob": 0.1, "corpus_insert_prob": 0.1,
                 "hallucination_prob": 0.05, "reference_prob": 0.1,
-                "conjunctions": ["if", "so that"], "max_chains": 2,
             }),
         ]
 
 
     async def generate_story(self, user_input, cycles=10, delay=0.2):
+        depth = 0
         for _ in range(cycles):
             for char in self.characters:
                 # grow this pillar
-                char.generate_text(user_input, self.shared_data)
+                char.generate_text(user_input, self.shared_data, depth)
                 self.shared_data[char.name] = char.output
 
                 # ground devours whatever just grew
@@ -138,9 +163,17 @@ class StoryGenerator:
                     devoured = ground_devour(fragment)
                     self.ground.append(devoured)
 
+                    # Enforce 1288 character cap on ground
+                    joined_ground = " ".join(self.ground)
+                    if len(joined_ground) > 1288:
+                        truncated_ground = joined_ground[:1288]
+                        self.ground = [truncated_ground]
+
                 # show scene as it builds
                 self.format_output()
                 await asyncio.sleep(delay)
+            
+            depth += 1  # increase after each full round of characters
 
 
     def format_output(self, col_width=30):
@@ -150,16 +183,23 @@ class StoryGenerator:
         height = max(len(char.output) for char in self.characters)
         names = [char.name for char in self.characters]
 
+        # Wrap ground into lines (downward growth)
+        ground_text = " ".join(self.ground)
+        ground_lines = textwrap.wrap(ground_text, width=col_width)
+
+        max_rows = max(height, len(ground_lines))
+
         print("\n" + "-" * (col_width * len(names) + len(names) - 1 + 4))
-        for row in range(height):
+        for row in range(max_rows):
             row_cells = []
             for char in self.characters:
                 if row < len(char.output):
                     row_cells.append(char.output[row][:col_width].ljust(col_width))
                 else:
                     row_cells.append("".ljust(col_width))
-            ground_text = self.ground[row] if row < len(self.ground) else ""
-            print(" | ".join(row_cells) + " || " + ground_text)
+
+            g_line = ground_lines[row] if row < len(ground_lines) else ""
+            print(" | ".join(row_cells) + " || " + g_line)
         print("-" * (col_width * len(names) + len(names) - 1 + 4))
 
 
