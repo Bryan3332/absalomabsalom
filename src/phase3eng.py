@@ -1,14 +1,39 @@
 # faulkner_machine.py
-import asyncio
+"""
+Faulkner Machine v3 — Phase 3
+
+Behavior summary:
+- Four sequential voices (Mr Compson, Rosa, Quentin, Shreve)
+- Pillars grow upward line-by-line; ground grows downward line-by-line
+- Incest = small fragment-stealing between pillars
+- Pillars & ground hard-capped at 1288 characters
+- Quentin uses outer-loop depth for decay
+- Ground devours pieces of pillar output (bite-size) and outputs distorted fragments
+"""
+
+import os
 import random
 import textwrap
+import asyncio
+import time
 
-from voices import rosa_rhetorical, quentin_decay, shreve_speculation, father_echo
+from voices import mrcompson_echo, rosa_rhetorical, quentin_decay, shreve_speculation
+from ground import ground_devour
 from corpus_loader import load_corpus
+from incest import steal_fragment
 
-# Load Faulkner fragments from txt (adjust filename if yours differs)
-CORPUS = load_corpus("absalom-clean.txt")
+# -------- CONFIG ----------
+PILLAR_CHAR_CAP = 1288
+GROUND_CHAR_CAP = 1288
+CYCLES = 24            # how many full rounds of 4 voices
+DELAY = 0.18           # seconds between each voice output (for display)
+COL_WIDTH = 28         # column width for terminal UI
+CORPUS_FILENAME = "absalom-clean.txt"  # expect this in same folder as script
+# ---------------------------
 
+SCRIPT_DIR = os.path.dirname(__file__)  # folder of faulkner_machine.py
+CORPUS_PATH = os.path.join(SCRIPT_DIR, "absalom-clean.txt")
+CORPUS = load_corpus(CORPUS_PATH)
 
 class Character:
     def __init__(self, name, style_rules):
@@ -17,9 +42,6 @@ class Character:
         self.output = []
 
     def generate_text(self, input_text, shared_data, depth=0):
-        if depth >= self.style_rules.get("max_depth", 3):
-            return ""
-
         words = input_text.split()
 
         # Core manipulations
@@ -41,8 +63,12 @@ class Character:
         # Save output (this column)
         self.output.append(text)
 
-        # Recurse
-        return self.generate_text(text, shared_data, depth + 1)
+         # Enforce 1288 character cap on pillar
+        joined = " ".join(self.output)
+        if len(joined) > 1288:
+            truncated = joined[:1288]  # cut off at 1288 characters
+            self.output = [truncated]  # reset output to a single truncated string
+
 
     def randomly_repeat(self, words):
         repeated_words = []
@@ -101,6 +127,7 @@ class StoryGenerator:
             "Quentin": [],
             "Shreve": []
         }
+        self.ground = [] #holds the earth's fragments
 
         self.characters = [
             Character("Mr Compson", {
@@ -121,82 +148,59 @@ class StoryGenerator:
             }),
         ]
 
-    async def run_loop(self, character, input_text):
-        # run the generation
-        character.generate_text(input_text, self.shared_data)
 
-        # update shared data
-        self.shared_data[character.name] = character.output
+    async def generate_story(self, user_input, cycles=10, delay=0.2):
+        depth = 0
+        for _ in range(cycles):
+            for char in self.characters:
+                # grow this pillar
+                char.generate_text(user_input, self.shared_data, depth)
+                self.shared_data[char.name] = char.output
 
-        # small pause so other tasks can run
-        await asyncio.sleep(0.05)
+                # ground devours whatever just grew
+                if char.output:
+                    fragment = char.output[-1]  # latest line
+                    devoured = ground_devour(fragment)
+                    self.ground.append(devoured)
 
-    async def generate_story(self, user_input):
-        tasks = [self.run_loop(char, user_input) for char in self.characters]
-        await asyncio.gather(*tasks)
-        # after generation, format output (pillars + ground)
-        self.format_output()
+                    # Enforce 1288 character cap on ground
+                    joined_ground = " ".join(self.ground)
+                    if len(joined_ground) > 1288:
+                        truncated_ground = joined_ground[:1288]
+                        self.ground = [truncated_ground]
+
+                # show scene as it builds
+                self.format_output()
+                await asyncio.sleep(delay)
+            
+            depth += 1  # increase after each full round of characters
+
 
     def format_output(self, col_width=30):
         """
-        Print side-by-side columns (pillars) and then a Ground chorus that has
-        been passed deterministically through all four voice helpers.
+        Print pillars rising upward with the ground swallowing lines.
         """
-        # prepare wrapped lines for each cell per depth
-        # determine number of rows (depth levels)
-        max_height = max(len(char.output) for char in self.characters)
+        height = max(len(char.output) for char in self.characters)
+        names = [char.name for char in self.characters]
 
-        # header
-        headers = [char.name for char in self.characters]
-        header_line = " | ".join(h.center(col_width) for h in headers)
-        sep_line = "-" * len(header_line)
-        print(header_line)
-        print(sep_line)
+        # Wrap ground into lines (downward growth)
+        ground_text = " ".join(self.ground)
+        ground_lines = textwrap.wrap(ground_text, width=col_width)
 
-        # for each depth row, print each column with proper wrapping/padding
-        for i in range(max_height):
-            # get wrapped lines per column for this depth
-            wrapped_columns = []
+        max_rows = max(height, len(ground_lines))
+
+        print("\n" + "-" * (col_width * len(names) + len(names) - 1 + 4))
+        for row in range(max_rows):
+            row_cells = []
             for char in self.characters:
-                text = char.output[i] if i < len(char.output) else ""
-                wrapped = textwrap.wrap(text, width=col_width) or [""]
-                wrapped_columns.append(wrapped)
+                if row < len(char.output):
+                    row_cells.append(char.output[row][:col_width].ljust(col_width))
+                else:
+                    row_cells.append("".ljust(col_width))
 
-            # compute max lines needed for this row (because columns may wrap differently)
-            max_lines = max(len(w) for w in wrapped_columns)
-
-            # print line-by-line for this row
-            for line_idx in range(max_lines):
-                row_cells = []
-                for col_wrapped in wrapped_columns:
-                    cell_line = col_wrapped[line_idx] if line_idx < len(col_wrapped) else ""
-                    row_cells.append(cell_line.ljust(col_width))
-                print(" | ".join(row_cells))
-            print(sep_line)
-
-        # --- Build the Ground (true chorus) ---
-        all_text = []
-        for char in self.characters:
-            all_text.extend(char.output)
-
-        combined = " ".join(all_text).strip()
-
-        # Force a deeper decay value based on configured max depths
-        max_depth_val = max(c.style_rules.get("max_depth", 3) for c in self.characters)
-        decay_depth = max_depth_val + 2
-
-        # deterministically pass through each helper (in sequence)
-        combined = mrcompson_echo(combined, self.shared_data)
-        combined = rosa_rhetorical(combined)
-        combined = quentin_decay(combined, decay_depth)
-        combined = shreve_speculation(combined, "Ground")
-
-        # glue to make the run-on swamp effect
-        ground = self.characters[0].glue_with_conjunctions(combined.split())
-
-        print("\n\nTHE EARTH SWALLOWS EVERYTHING")
-        print("=" * (col_width * 4 + 3 * 3))
-        print(textwrap.fill(ground, width=col_width * 4 + 3 * 3))
+            g_line = ground_lines[row] if row < len(ground_lines) else ""
+            print(" | ".join(row_cells) + " || " + g_line)
+        print("-" * (col_width * len(names) + len(names) - 1 + 4))
 
 
 if __name__ == "__main__":
