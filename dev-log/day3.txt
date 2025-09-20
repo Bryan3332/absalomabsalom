@@ -1,0 +1,13 @@
+Day 3
+
+Numerous issues with the engine logic.
+
+UI broke and became a 49 frame stack of terminal windows. Got it down to 29 then 24, but need it to get down to one. It needs to look like an "animated" screen and NOT multiple frames.
+
+This might be too ambitious of a project. There are so many moving parts and I think I overstepped my abilities here. The code is getting way too long and interwoven, I don't think it's very stable.
+
+I don't understand why there needs to be so many frames printed anyway. Can't I just slow down the output printing?
+
+I'm going to start this all over again. It's gotten too worried and I can't keep iterating the engine. More things break with each version, I don't even know what works anymore. This was a huge waste of a Saturday, I could have had fun and relaxed today or done something productive. This has been a waste of time all-around.
+
+I feel so disheartened and upset. I can't even look at this anymore.
